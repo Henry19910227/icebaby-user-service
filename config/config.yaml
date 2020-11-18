@@ -23,12 +23,12 @@ Database:
   DBType: mysql
   Debug:
     Host: 127.0.0.1:3306
-    DBName: ichat
+    DBName: icebaby
     UserName: root
     Password: 123456
   Release:
     Host: icebaby-user-mysql:3306
-    DBName: ichat
+    DBName: icebaby
     UserName: root
     Password: 123456
 JWT:
