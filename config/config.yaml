@@ -1,0 +1,37 @@
+Server:
+  RunMode: debug
+  HttpPort: 9090
+  ReadTimeout: 60
+  WriteTimeout: 60
+App:
+  LogFilePath: .
+  LogFileName: app
+  LogFileExt: log
+  UploadSavePath: ./storege
+  UploadImageAllowExt:
+    - .jpg
+    - .png
+  UploadImageMaxSize: 1 #MB
+Log:
+  FileName: app
+  FileExt: log
+  Debug:
+    Path: .
+  Release:
+    Path: .
+Database:
+  DBType: mysql
+  Debug:
+    Host: 127.0.0.1:3306
+    DBName: ichat
+    UserName: root
+    Password: 123456
+  Release:
+    Host: icebaby-user-mysql:3306
+    DBName: ichat
+    UserName: root
+    Password: 123456
+JWT:
+  Secret: henry
+  Issuer: icebaby
+  Expire: 1 #hour
