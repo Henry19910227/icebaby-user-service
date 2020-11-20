@@ -55,14 +55,7 @@ func (us *userService) UpdateEmail(uid int64, email string) (*model.User, error)
 
 // UpdatePassword ...
 func (us *userService) UpdatePassword(uid int64, oldpwd string, newpwd string) error {
-	user, err := us.userRepo.GetByID(uid)
-	if err != nil {
-		return err
-	}
-	if user.Password != oldpwd {
-		return errors.New("與舊密碼不一致")
-	}
-	return us.userRepo.UpdatePassword(uid, newpwd)
+	return nil
 }
 
 // UploadImage Implement UserService interface

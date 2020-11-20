@@ -35,8 +35,7 @@ func (ur *userRepository) GetAll() ([]*model.User, error) {
 		var image sql.NullString
 		var birthday sql.NullString
 		if err := rows.Scan(&uid, &email, &password, &name, &image, &birthday); err == nil {
-			user := model.NewUser(uid, email, password, name, image, birthday)
-			users = append(users, user)
+			users = append(users, nil)
 		}
 	}
 	return users, nil
@@ -72,7 +71,7 @@ func (ur *userRepository) GetByID(id int64) (*model.User, error) {
 	if err := row.Scan(&uid, &email, &password, &name, &image, &birthday); err != nil {
 		return nil, err
 	}
-	return model.NewUser(uid, email, password, name, image, birthday), nil
+	return nil, nil
 }
 
 // Add ...
