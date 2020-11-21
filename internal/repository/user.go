@@ -16,6 +16,47 @@ func NewUserRepository(conn *sql.DB) UserRepository {
 	return &userRepository{conn}
 }
 
+// Add ...
+func (ur *userRepository) Add(user *model.User) (int64, error) {
+	tx, err := ur.db.Begin()
+	if err != nil {
+		return 0, err
+	}
+	defer tx.Rollback()
+	query := "INSERT INTO users (role,invite_code,invite_user_id,status) VALUES (?,?,?,?)"
+	userRes, err := tx.Exec(query, user.Role, user.InviteCode, user.InviteUserID, 0)
+	if err != nil {
+		return 0, err
+	}
+	lastUserID, err := userRes.LastInsertId()
+	if err != nil {
+		return 0, err
+	}
+	query = "INSERT INTO user_auths (type,identifier,password,user_id) VALUES (?,?,?,?)"
+	_, err = tx.Exec(query, user.AuthType, user.Identifier, user.Password, lastUserID)
+	if err != nil {
+		return 0, err
+	}
+	query = "INSERT INTO user_details (user_id,nickname,avatar,intro,sex,birthday,email,area,height,weight,favorite,smoke,drink) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)"
+	_, err = tx.Exec(query, lastUserID, user.Nickname, user.Avatar, user.Intro, user.Sex, user.Birthday, user.Email, user.Area, user.Height, user.Weight, user.Favorite, user.Smoke, user.Drink)
+	if err != nil {
+		return 0, err
+	}
+	tx.Commit()
+	return userRes.LastInsertId()
+}
+
+// GetUserIDByCode 以 inviteCode 獲取 uid
+func (ur *userRepository) GetUserIDByCode(inviteCode string) (int64, error) {
+	query := "SELECT id FROM users WHERE invite_code = ?"
+	row := ur.db.QueryRow(query, inviteCode)
+	var uid int64
+	if err := row.Scan(&uid); err != nil {
+		return 0, errors.New("無效的邀請碼")
+	}
+	return uid, nil
+}
+
 // GetAll Implement UserRepository interface
 func (ur *userRepository) GetAll() ([]*model.User, error) {
 	query := "SELECT users.id,users.email,users.password,userinfo.name,userinfo.image,userinfo.birthday\n" +
@@ -72,31 +113,6 @@ func (ur *userRepository) GetByID(id int64) (*model.User, error) {
 		return nil, err
 	}
 	return nil, nil
-}
-
-// Add ...
-func (ur *userRepository) Add(email string, password string, name string, birthday string) (int64, error) {
-	tx, err := ur.db.Begin()
-	if err != nil {
-		return 0, err
-	}
-	defer tx.Rollback()
-	query := "INSERT INTO userinfo (name,image,birthday) VALUES (?,?,?)"
-	infoRes, err := tx.Exec(query, name, "", birthday)
-	if err != nil {
-		return 0, err
-	}
-	infoLastID, err := infoRes.LastInsertId()
-	if err != nil {
-		return 0, err
-	}
-	query = "INSERT INTO users (email,password,userinfo_id) VALUES (?,?,?)"
-	userRes, err := tx.Exec(query, email, password, infoLastID)
-	if err != nil {
-		return 0, err
-	}
-	tx.Commit()
-	return userRes.LastInsertId()
 }
 
 // DeleteByID ...

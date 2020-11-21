@@ -22,10 +22,10 @@ Log:
 Database:
   DBType: mysql
   Debug:
-    Host: 127.0.0.1:3306
+    Host: 127.0.0.1:8889
     DBName: icebaby
-    UserName: root
-    Password: 123456
+    UserName: henry
+    Password: aaaa8027
   Release:
     Host: icebaby-user-mysql:3306
     DBName: icebaby

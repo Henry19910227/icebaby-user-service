@@ -8,6 +8,7 @@ type Register struct {
 	Role       int    `json:"role" binding:"required"`
 	Nickname   string `json:"nickname" binding:"required,min=1,max=16"`
 	Birthday   string `json:"birthday" binding:"required,datetime=2006-01-02"`
+	Sex        int    `json:"sex" binding:"required"`
 	Email      string `json:"email" binding:"required,email"`
 	Invite     string `json:"invite"`
 }

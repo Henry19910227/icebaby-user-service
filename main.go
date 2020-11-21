@@ -24,11 +24,12 @@ import (
 )
 
 var (
-	mysqlDB      *sql.DB
-	userService  service.UserService
-	loginService service.LoginService
-	jwtTool      jwt.Tool
-	viperTool    *viper.Viper
+	mysqlDB         *sql.DB
+	userService     service.UserService
+	loginService    service.LoginService
+	registerService service.RegisterService
+	jwtTool         jwt.Tool
+	viperTool       *viper.Viper
 )
 
 func init() {
@@ -37,6 +38,7 @@ func init() {
 	setupDB()
 	setupLoginService()
 	setupUserService()
+	setupRegisterService()
 	setupTokenTool()
 }
 
@@ -63,6 +65,7 @@ func main() {
 	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler, url))
 	controller.NewUserController(router, userService, jwtTool)
 	controller.NewLoginController(router, loginService, jwtTool)
+	controller.NewRegisterController(router, registerService)
 
 	router.Run(":9090")
 }
@@ -100,6 +103,10 @@ func setupLoginService() {
 		log.Fatalf(err.Error())
 	}
 	userService = service.NewUserService(repository.NewUserRepository(mysqlDB), upload.NewUploadTool(setting))
+}
+
+func setupRegisterService() {
+	registerService = service.NewRegisterService(repository.NewUserRepository(mysqlDB))
 }
 
 func setupUserService() {

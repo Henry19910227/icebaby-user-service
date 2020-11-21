@@ -21,6 +21,11 @@ func NewUserService(repo repository.UserRepository, uploader upload.Tool) UserSe
 	return &userService{repo, uploader}
 }
 
+// Add ...
+func (us *userService) Add(validator *validator.UserAddValidator) (int64, error) {
+	return 0, nil
+}
+
 // GetAll Implement UserService interface
 func (us *userService) GetAll() ([]*model.User, error) {
 	return us.userRepo.GetAll()
@@ -33,11 +38,6 @@ func (us *userService) GetUser(email string, password string) (*model.User, erro
 // Get Implement UserService interface
 func (us *userService) Get(id int64) (*model.User, error) {
 	return us.userRepo.GetByID(id)
-}
-
-// Add Implement UserService interface
-func (us *userService) Add(validator *validator.UserAddValidator) (int64, error) {
-	return us.userRepo.Add(validator.Email, validator.Password, validator.Name, validator.Birthday)
 }
 
 // Delete Implement UserService interface

@@ -10,7 +10,6 @@ import (
 // LoginService ...
 type LoginService interface {
 	Login(email string, password string) (*model.User, error)
-	Register(email string, password string, name string, birthday string) (int64, error)
 }
 
 //  AythType   int    `json:"auth_type" binding:"required"`
@@ -24,7 +23,7 @@ type LoginService interface {
 
 // RegisterService ...
 type RegisterService interface {
-	Register(user validator.Register) (int64, error)
+	Register(user *validator.Register) (int64, error)
 }
 
 // UserService ...

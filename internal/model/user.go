@@ -2,15 +2,25 @@ package model
 
 // User ...
 type User struct {
-	ID           int64  `json:"id"`
-	Role         string `json:"role"`
-	Nickname     string `json:"nickname"`
-	Avatar       string `json:"avatar"`
-	Intro        string `json:"intro"`
-	Sex          int    `json:"sex"`
-	InviteCode   string `json:"invite_code"`
-	InviteUserID string `json:"invite_user_id"`
-	AuthType     int    `json:"auth_type"`
-	Identifier   string `json:"identifier"`
-	Password     string `json:"password"`
+	ID           int64
+	Role         int
+	InviteCode   string
+	InviteUserID int64
+
+	Nickname string
+	Avatar   string
+	Intro    string
+	Sex      int
+	Birthday string
+	Email    string
+	Area     string
+	Height   int
+	Weight   int
+	Favorite string
+	Smoke    int
+	Drink    int
+
+	AuthType   int
+	Identifier string
+	Password   string
 }

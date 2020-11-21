@@ -17,7 +17,3 @@ func NewLoginService(repo repository.UserRepository) LoginService {
 func (ls *loginService) Login(email string, password string) (*model.User, error) {
 	return ls.userRepo.GetUser(email, password)
 }
-
-func (ls *loginService) Register(email string, password string, name string, birthday string) (int64, error) {
-	return ls.userRepo.Add(email, password, name, birthday)
-}
