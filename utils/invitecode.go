@@ -6,15 +6,6 @@ import (
 	"encoding/binary"
 )
 
-func readBytes(n int) []byte {
-	b := make([]byte, n)
-	_, err := rand.Read(b)
-	if err != nil {
-		panic(err)
-	}
-	return b
-}
-
 // GenerateInviteCode ...
 func GenerateInviteCode(n int) string {
 	letterRunes := []rune("0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ")
@@ -25,4 +16,13 @@ func GenerateInviteCode(n int) string {
 		bb.WriteRune(letterRunes[binary.BigEndian.Uint32(readBytes(4))%l])
 	}
 	return bb.String()
+}
+
+func readBytes(n int) []byte {
+	b := make([]byte, n)
+	_, err := rand.Read(b)
+	if err != nil {
+		panic(err)
+	}
+	return b
 }

@@ -5,6 +5,8 @@ import (
 	"flag"
 	"log"
 
+	"github.com/Henry19910227/icebaby-user-service/pkg/otp"
+
 	"github.com/Henry19910227/icebaby-user-service/pkg/jwt"
 	"github.com/spf13/viper"
 
@@ -24,22 +26,21 @@ import (
 )
 
 var (
-	mysqlDB         *sql.DB
+	mysqlDB   *sql.DB
+	jwtTool   jwt.Tool
+	viperTool *viper.Viper
+	otpTool   otp.Tool
+)
+
+var (
 	userService     service.UserService
 	loginService    service.LoginService
 	registerService service.RegisterService
-	jwtTool         jwt.Tool
-	viperTool       *viper.Viper
 )
 
 func init() {
-	setupViper()
-	setupLogger()
-	setupDB()
-	setupLoginService()
-	setupUserService()
-	setupRegisterService()
-	setupTokenTool()
+	setupTool()
+	setupService()
 }
 
 // @title Henry
@@ -70,6 +71,15 @@ func main() {
 	router.Run(":9090")
 }
 
+/** Tool */
+func setupTool() {
+	setupViper()
+	setupDB()
+	setupLogger()
+	setupTokenTool()
+	setupOTPTool()
+}
+
 func setupViper() {
 	vp := viper.New()
 	vp.SetConfigFile("./config/config.yaml")
@@ -97,6 +107,25 @@ func setupLogger() {
 	global.Log = logger
 }
 
+func setupTokenTool() {
+	setting, err := jwt.NewJWTSetting("./config/config.yaml")
+	if err != nil {
+		log.Fatalf(err.Error())
+	}
+	jwtTool = jwt.NewJWTTool(setting)
+}
+
+func setupOTPTool() {
+	otpTool = otp.NewOTPTool()
+}
+
+/** Service */
+func setupService() {
+	setupLoginService()
+	setupRegisterService()
+	setupUserService()
+}
+
 func setupLoginService() {
 	setting, err := upload.NewUploadSetting("./config/config.yaml")
 	if err != nil {
@@ -106,17 +135,11 @@ func setupLoginService() {
 }
 
 func setupRegisterService() {
-	registerService = service.NewRegisterService(repository.NewUserRepository(mysqlDB))
+	userRepo := repository.NewUserRepository(mysqlDB)
+	otpRepo := repository.NewOTPReopsitory(otpTool)
+	registerService = service.NewRegisterService(userRepo, otpRepo)
 }
 
 func setupUserService() {
 	loginService = service.NewLoginService(repository.NewUserRepository(mysqlDB))
-}
-
-func setupTokenTool() {
-	setting, err := jwt.NewJWTSetting("./config/config.yaml")
-	if err != nil {
-		log.Fatalf(err.Error())
-	}
-	jwtTool = jwt.NewJWTTool(setting)
 }

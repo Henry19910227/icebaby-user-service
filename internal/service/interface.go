@@ -24,6 +24,7 @@ type LoginService interface {
 // RegisterService ...
 type RegisterService interface {
 	Register(user *validator.Register) (int64, error)
+	SendMobileOTP(mobile string) (string, error)
 }
 
 // UserService ...

@@ -16,3 +16,9 @@ type UserRepository interface {
 	UpdatePassword(uid int64, password string) error
 	UpdateUserImage(uid int64, image string) (*model.User, error)
 }
+
+// OTPRepository ...
+type OTPRepository interface {
+	Generate(mobile string) (string, error)
+	Validate(code string, secret string) bool
+}

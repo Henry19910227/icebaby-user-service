@@ -18,6 +18,7 @@ func NewRegisterController(router *gin.Engine, registerService service.RegisterS
 	registerController := &ICRegisterController{registerService}
 	v1 := router.Group("/icebaby/v1")
 	v1.POST("/register", registerController.Register)
+	v1.POST("/register/send_mobile_otp", registerController.SendMobileOTP)
 }
 
 // Register ...
@@ -32,5 +33,20 @@ func (rc *ICRegisterController) Register(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"code": http.StatusBadRequest, "data": nil, "msg": err.Error()})
 		return
 	}
-	c.JSON(http.StatusBadRequest, gin.H{"code": http.StatusBadRequest, "data": uid, "msg": "register success!"})
+	c.JSON(http.StatusOK, gin.H{"code": http.StatusOK, "data": uid, "msg": "register success!"})
+}
+
+// SendMobileOTP 生成 Phone OTP
+func (rc *ICRegisterController) SendMobileOTP(c *gin.Context) {
+	var input validator.OTP
+	if err := c.ShouldBindJSON(&input); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"code": http.StatusBadRequest, "data": nil, "msg": err.Error()})
+		return
+	}
+	code, err := rc.registerService.SendMobileOTP(input.Mobile)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"code": http.StatusBadRequest, "data": nil, "msg": err.Error()})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{"code": http.StatusOK, "data": code, "msg": "驗證簡訊已寄出!"})
 }
