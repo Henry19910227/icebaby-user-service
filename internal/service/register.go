@@ -37,7 +37,7 @@ func (service *IBRegisterService) Register(input *validator.Register) (int64, er
 		Password:     input.Password,
 		Status:       1,
 	}
-	return service.userRepo.Add(user)
+	return service.userRepo.InsertUser(user)
 }
 
 // SendMobileOTP ...

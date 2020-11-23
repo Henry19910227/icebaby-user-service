@@ -9,17 +9,8 @@ import (
 
 // LoginService ...
 type LoginService interface {
-	Login(email string, password string) (*model.User, error)
+	Login(mobile string, password string) (*model.APILoginRes, error)
 }
-
-//  AythType   int    `json:"auth_type" binding:"required"`
-// 	Identifier string `json:"identifier" binding:"required"`
-// 	Password   string `json:"password" binding:"required,min=8,max=16"`
-// 	Role       int    `json:"role" binding:"required"`
-// 	Nickname   string `json:"nickname" binding:"required,min=1,max=16"`
-// 	Birthday   string `json:"birthday" binding:"required,datetime=2006-01-02"`
-// 	Email      string `json:"email" binding:"required,email"`
-// 	InviteCode string `json:"invite_code"`
 
 // RegisterService ...
 type RegisterService interface {

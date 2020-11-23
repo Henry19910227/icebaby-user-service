@@ -141,5 +141,7 @@ func setupRegisterService() {
 }
 
 func setupUserService() {
-	loginService = service.NewLoginService(repository.NewUserRepository(mysqlDB))
+	userRepo := repository.NewUserRepository(mysqlDB)
+	validateRepo := repository.NewValidateRepository(mysqlDB)
+	loginService = service.NewLoginService(userRepo, validateRepo)
 }

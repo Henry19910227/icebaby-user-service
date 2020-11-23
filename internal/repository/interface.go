@@ -2,11 +2,15 @@ package repository
 
 import "github.com/Henry19910227/icebaby-user-service/internal/model"
 
+// ValidateRepository ...
+type ValidateRepository interface {
+	Validate(Identifier string, password string) (int64, error)
+}
+
 // UserRepository ...
 type UserRepository interface {
-	Add(user *model.User) (int64, error)
+	InsertUser(user *model.User) (int64, error)
 	GetUserIDByCode(inviteCode string) (int64, error)
-	GetUserByIdentifierAndPwd(identifier string, pwd string) (*model.User, error)
 
 	GetAll() ([]*model.User, error)
 	GetUser(email string, password string) (*model.User, error)

@@ -17,7 +17,7 @@ func NewUserRepository(conn *sql.DB) UserRepository {
 }
 
 // Add ...
-func (ur *userRepository) Add(user *model.User) (int64, error) {
+func (ur *userRepository) InsertUser(user *model.User) (int64, error) {
 	tx, err := ur.db.Begin()
 	if err != nil {
 		return 0, err
@@ -46,10 +46,6 @@ func (ur *userRepository) Add(user *model.User) (int64, error) {
 	return userRes.LastInsertId()
 }
 
-func (ur *userRepository) GetUserByIdentifierAndPwd(identifier string, pwd string) (*model.User, error) {
-	return nil, nil
-}
-
 // GetUserIDByCode 以 inviteCode 獲取 uid
 func (ur *userRepository) GetUserIDByCode(inviteCode string) (int64, error) {
 	query := "SELECT id FROM users WHERE invite_code = ?"
@@ -63,10 +59,15 @@ func (ur *userRepository) GetUserIDByCode(inviteCode string) (int64, error) {
 
 // GetAll Implement UserRepository interface
 func (ur *userRepository) GetAll() ([]*model.User, error) {
-	query := "SELECT users.id,users.email,users.password,userinfo.name,userinfo.image,userinfo.birthday\n" +
+	query := "SELECT users.id, users.role, users.invite_code, users.invite_user_id, users.`status`, users.create_at, users.update_at,\n" +
+		"user_details.nickname, user_details.avatar, user_details.intro, user_details.sex,\n" +
+		"user_details.birthday, user_details.email, user_details.area, user_details.height,\n" +
+		"user_details.weight, user_details.favorite, user_details.smoke, user_details.drink,\n" +
+		"user_auths.type, user_auths.identifier, user_auths.`password`\n" +
 		"FROM users\n" +
-		"LEFT JOIN userinfo\n" +
-		"ON users.userinfo_id = userinfo.id "
+		"INNER JOIN user_details ON users.id = user_details.user_id\n" +
+		"INNER JOIN user_auths ON users.id = user_auths.user_id\n" +
+		"WHERE user_auths.identifier = ? && user_auths.`password` = ?"
 	rows, err := ur.db.Query(query)
 	if err != nil {
 		return nil, err
@@ -100,23 +101,24 @@ func (ur *userRepository) GetUser(email string, password string) (*model.User, e
 
 // GetById ...
 func (ur *userRepository) GetByID(id int64) (*model.User, error) {
-	query := "SELECT users.id,users.email,users.password,userinfo.name,userinfo.image,userinfo.birthday\n" +
+	query := "SELECT users.id, users.role, users.invite_code, users.invite_user_id, users.`status`, users.create_at, users.update_at,\n" +
+		"user_details.nickname, user_details.avatar, user_details.intro, user_details.sex,\n" +
+		"user_details.birthday, user_details.email, user_details.area, user_details.height,\n" +
+		"user_details.weight, user_details.favorite, user_details.smoke, user_details.drink,\n" +
+		"user_auths.type, user_auths.identifier, user_auths.`password`\n" +
 		"FROM users\n" +
-		"LEFT JOIN userinfo\n" +
-		"ON users.userinfo_id = userinfo.id\n" +
-		"WHERE users.id = ?"
+		"INNER JOIN user_details ON users.id = user_details.user_id\n" +
+		"INNER JOIN user_auths ON users.id = user_auths.user_id\n" +
+		"WHERE users.id = ?;"
 	row := ur.db.QueryRow(query, id)
 
-	var uid int64
-	var email string
-	var password string
-	var name sql.NullString
-	var image sql.NullString
-	var birthday sql.NullString
-	if err := row.Scan(&uid, &email, &password, &name, &image, &birthday); err != nil {
+	var user model.User
+	if err := row.Scan(&user.ID, &user.Role, &user.InviteCode, &user.InviteUserID, &user.Status, &user.CreateAt, &user.UpdateAt,
+		&user.Nickname, &user.Avatar, &user.Intro, &user.Sex, &user.Birthday, &user.Email, &user.Area, &user.Height, &user.Weight,
+		&user.Favorite, &user.Smoke, &user.Drink, &user.AuthType, &user.Identifier, &user.Password); err != nil {
 		return nil, err
 	}
-	return nil, nil
+	return &user, nil
 }
 
 // DeleteByID ...

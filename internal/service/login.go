@@ -6,14 +6,30 @@ import (
 )
 
 type loginService struct {
-	userRepo repository.UserRepository
+	userRepo     repository.UserRepository
+	validateRepo repository.ValidateRepository
 }
 
 // NewLoginService ...
-func NewLoginService(repo repository.UserRepository) LoginService {
-	return &loginService{repo}
+func NewLoginService(userRepo repository.UserRepository, validateRepo repository.ValidateRepository) LoginService {
+	return &loginService{userRepo, validateRepo}
 }
 
-func (ls *loginService) Login(email string, password string) (*model.User, error) {
-	return ls.userRepo.GetUser(email, password)
+// Login ...
+func (service *loginService) Login(mobile string, password string) (*model.APILoginRes, error) {
+	uid, err := service.validateRepo.Validate(mobile, password)
+	if err != nil {
+		return nil, err
+	}
+	user, err := service.userRepo.GetByID(uid)
+	if err != nil {
+		return nil, err
+	}
+	res := &model.APILoginRes{
+		ID:       user.ID,
+		Role:     user.Role,
+		Status:   user.Status,
+		Nickname: user.Nickname,
+	}
+	return res, nil
 }
