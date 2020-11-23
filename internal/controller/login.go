@@ -41,18 +41,3 @@ func (lc *LoginController) Login(c *gin.Context) {
 	}
 	c.JSON(http.StatusOK, gin.H{"code": http.StatusOK, "token": tokenString, "data": user, "msg": "login success!"})
 }
-
-// Register ...
-func (lc *LoginController) Register(c *gin.Context) {
-	// var user validator.UserAddValidator
-	// if err := c.ShouldBindJSON(&user); err != nil {
-	// 	c.JSON(http.StatusOK, gin.H{"code": http.StatusBadRequest, "data": nil, "msg": err.Error()})
-	// 	return
-	// }
-	// uid, err := lc.loginService.Register(user.Email, user.Password, user.Name, user.Birthday)
-	// if err != nil {
-	// 	c.JSON(http.StatusOK, gin.H{"code": http.StatusBadRequest, "data": nil, "msg": err.Error()})
-	// 	return
-	// }
-	// c.JSON(http.StatusOK, gin.H{"code": http.StatusOK, "data": uid, "msg": "註冊成功!"})
-}

@@ -24,7 +24,7 @@ func (ur *userRepository) Add(user *model.User) (int64, error) {
 	}
 	defer tx.Rollback()
 	query := "INSERT INTO users (role,invite_code,invite_user_id,status) VALUES (?,?,?,?)"
-	userRes, err := tx.Exec(query, user.Role, user.InviteCode, user.InviteUserID, 0)
+	userRes, err := tx.Exec(query, user.Role, user.InviteCode, user.InviteUserID, user.Status)
 	if err != nil {
 		return 0, err
 	}
@@ -44,6 +44,10 @@ func (ur *userRepository) Add(user *model.User) (int64, error) {
 	}
 	tx.Commit()
 	return userRes.LastInsertId()
+}
+
+func (ur *userRepository) GetUserByIdentifierAndPwd(identifier string, pwd string) (*model.User, error) {
+	return nil, nil
 }
 
 // GetUserIDByCode 以 inviteCode 獲取 uid

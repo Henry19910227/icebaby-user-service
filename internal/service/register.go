@@ -35,6 +35,7 @@ func (service *IBRegisterService) Register(input *validator.Register) (int64, er
 		AuthType:     input.AythType,
 		Identifier:   input.Identifier,
 		Password:     input.Password,
+		Status:       1,
 	}
 	return service.userRepo.Add(user)
 }

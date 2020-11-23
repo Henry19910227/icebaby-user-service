@@ -6,6 +6,7 @@ type User struct {
 	Role         int
 	InviteCode   string
 	InviteUserID int64
+	Status       int
 
 	Nickname string
 	Avatar   string
