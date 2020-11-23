@@ -28,6 +28,13 @@ func (rc *ICRegisterController) Register(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"code": http.StatusBadRequest, "data": nil, "msg": err.Error()})
 		return
 	}
+
+	// auth = 1 驗證手機號碼
+	if input.AythType == 1 && !rc.registerService.VerifyMobileOTP(input.MobileOTP, input.Identifier) {
+		c.JSON(http.StatusBadRequest, gin.H{"code": http.StatusBadRequest, "data": nil, "msg": "手機驗證碼錯誤"})
+		return
+	}
+
 	uid, err := rc.registerService.Register(&input)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"code": http.StatusBadRequest, "data": nil, "msg": err.Error()})
@@ -38,7 +45,7 @@ func (rc *ICRegisterController) Register(c *gin.Context) {
 
 // SendMobileOTP 生成 Phone OTP
 func (rc *ICRegisterController) SendMobileOTP(c *gin.Context) {
-	var input validator.OTP
+	var input validator.MobileOTPRequest
 	if err := c.ShouldBindJSON(&input); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"code": http.StatusBadRequest, "data": nil, "msg": err.Error()})
 		return

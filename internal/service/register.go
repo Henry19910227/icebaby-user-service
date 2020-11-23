@@ -43,3 +43,8 @@ func (service *IBRegisterService) Register(input *validator.Register) (int64, er
 func (service *IBRegisterService) SendMobileOTP(mobile string) (string, error) {
 	return service.otpRepo.Generate(mobile)
 }
+
+// VerifyMobileOTP ...
+func (service *IBRegisterService) VerifyMobileOTP(code string, mobile string) bool {
+	return service.otpRepo.Validate(code, mobile)
+}

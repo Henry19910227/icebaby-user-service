@@ -11,9 +11,10 @@ type Register struct {
 	Sex        int    `json:"sex" binding:"required"`
 	Email      string `json:"email" binding:"required,email"`
 	Invite     string `json:"invite"`
+	MobileOTP  string `json:"mobile_otp"`
 }
 
-// OTP 驗證OTP請求
-type OTP struct {
+// MobileOTPRequest 驗證OTP請求
+type MobileOTPRequest struct {
 	Mobile string `json:"mobile" binding:"required"`
 }

@@ -21,5 +21,5 @@ func (repo *ICOTPReopsitory) Generate(mobile string) (string, error) {
 
 // Validate 驗證 OTP 密碼是否有效
 func (repo *ICOTPReopsitory) Validate(code string, secret string) bool {
-	return repo.Validate(code, secret)
+	return repo.otpTool.Validate(code, secret)
 }
