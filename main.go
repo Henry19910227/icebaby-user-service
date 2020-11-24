@@ -64,7 +64,7 @@ func main() {
 	router.Use(middleware.Cors())                                   //加入解決跨域中間層
 	url := ginSwagger.URL("http://localhost:9090/swagger/doc.json") // The url pointing to API definition
 	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler, url))
-	controller.NewUserController(router, userService, jwtTool)
+	controller.NewUserController(router, userService, middleware.JWT(jwtTool))
 	controller.NewLoginController(router, loginService)
 	controller.NewRegisterController(router, registerService)
 
