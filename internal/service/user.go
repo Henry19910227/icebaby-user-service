@@ -21,23 +21,23 @@ func NewUserService(repo repository.UserRepository, uploader upload.Tool) UserSe
 	return &userService{repo, uploader}
 }
 
+// GetUserDetail ...
+func (us *userService) GetUserDetail(id int64) (*model.UserDetail, error) {
+	user, err := us.userRepo.GetUserByID(id)
+	if err != nil {
+		return nil, err
+	}
+	return model.NewUserDetail(user), nil
+}
+
 // Add ...
 func (us *userService) Add(validator *validator.UserAddValidator) (int64, error) {
 	return 0, nil
 }
 
 // GetAll Implement UserService interface
-func (us *userService) GetAll() ([]*model.User, error) {
+func (us *userService) GetAll() ([]*model.UserAll, error) {
 	return us.userRepo.GetAll()
-}
-
-func (us *userService) GetUser(email string, password string) (*model.User, error) {
-	return us.userRepo.GetUser(email, password)
-}
-
-// Get Implement UserService interface
-func (us *userService) Get(id int64) (*model.User, error) {
-	return us.userRepo.GetByID(id)
 }
 
 // Delete Implement UserService interface
@@ -45,11 +45,11 @@ func (us *userService) Delete(validator *validator.UserDeleteValidator) error {
 	return us.userRepo.DeleteByID(validator.ID)
 }
 
-func (us *userService) UpdateUserinfo(uid int64, name string, birthday string) (*model.User, error) {
+func (us *userService) UpdateUserinfo(uid int64, name string, birthday string) (*model.UserAll, error) {
 	return us.userRepo.UpdateUserinfo(uid, name, birthday)
 }
 
-func (us *userService) UpdateEmail(uid int64, email string) (*model.User, error) {
+func (us *userService) UpdateEmail(uid int64, email string) (*model.UserAll, error) {
 	return us.userRepo.UpdateEmail(uid, email)
 }
 

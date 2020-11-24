@@ -25,7 +25,7 @@ func (service *IBRegisterService) Register(input *model.APIRegisterReq) (int64, 
 	if err != nil && len(input.Invite) > 0 {
 		return 0, err
 	}
-	user := &model.User{
+	user := &model.UserAll{
 		Role:         input.Role,
 		Nickname:     input.Nickname,
 		Sex:          input.Sex,

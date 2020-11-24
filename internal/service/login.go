@@ -18,24 +18,18 @@ func NewLoginService(userRepo repository.UserRepository, validateRepo repository
 }
 
 // Login ...
-func (service *loginService) Login(mobile string, password string) (*model.APILoginRes, string, error) {
+func (service *loginService) Login(mobile string, password string) (*model.User, string, error) {
 	uid, err := service.validateRepo.ValidateLogin(mobile, password)
 	if err != nil {
 		return nil, "", err
 	}
-	user, err := service.userRepo.GetByID(uid)
+	user, err := service.userRepo.GetUserByID(uid)
 	if err != nil {
 		return nil, "", err
-	}
-	res := &model.APILoginRes{
-		ID:       user.ID,
-		Role:     user.Role,
-		Status:   user.Status,
-		Nickname: user.Nickname,
 	}
 	token, err := service.jwtTool.GenerateToken(uid)
 	if err != nil {
 		return nil, "", err
 	}
-	return res, token, nil
+	return model.NewUser(user), token, nil
 }

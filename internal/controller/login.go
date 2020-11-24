@@ -23,12 +23,12 @@ func NewLoginController(router *gin.Engine, loginService service.LoginService) {
 
 // Login ...
 func (lc *LoginController) Login(c *gin.Context) {
-	var loginInput model.APILoginReq
-	if err := c.ShouldBindJSON(&loginInput); err != nil {
+	var request model.APILoginRequest
+	if err := c.ShouldBindJSON(&request); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"code": http.StatusBadRequest, "data": nil, "msg": err.Error()})
 		return
 	}
-	user, token, err := lc.loginService.Login(loginInput.Identifier, loginInput.Password)
+	user, token, err := lc.loginService.Login(request.Identifier, request.Password)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"code": http.StatusBadRequest, "data": nil, "msg": err.Error()})
 		return

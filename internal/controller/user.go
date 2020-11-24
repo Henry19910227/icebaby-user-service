@@ -3,6 +3,8 @@ package controller
 import (
 	"net/http"
 
+	"github.com/Henry19910227/icebaby-user-service/internal/model"
+
 	"github.com/Henry19910227/icebaby-user-service/internal/service"
 	"github.com/Henry19910227/icebaby-user-service/internal/validator"
 	"github.com/gin-gonic/gin"
@@ -20,6 +22,8 @@ func NewUserController(router *gin.Engine, userService service.UserService, jwtM
 	}
 	v1 := router.Group("/icebaby/v1")
 	v1.Use(jwtMidd)
+	v1.GET("/user/:id/detail", userController.GetUserDetail)
+
 	v1.GET("/user", userController.GetAll)
 	v1.GET("/user/:id", userController.Get)
 	v1.DELETE("/user/:id", userController.DeleteByID)
@@ -29,6 +33,16 @@ func NewUserController(router *gin.Engine, userService service.UserService, jwtM
 	v1.PUT("/user/:id/image", userController.UpdateUserImage)
 	v1.StaticFS("/userimage", http.Dir("./storege"))
 	v1.GET("/panic", userController.PanicTest)
+}
+
+// GetUserDetail 獲取用戶詳細
+func (uc *UserController) GetUserDetail(c *gin.Context) {
+	var input model.APIUserDetailRequest
+	if err := c.ShouldBindUri(&input); err != nil {
+		c.JSON(http.StatusOK, gin.H{"code": http.StatusBadRequest, "data": nil, "msg": err.Error()})
+		return
+	}
+
 }
 
 // GetAll 列出所有用戶
@@ -47,7 +61,7 @@ func (uc *UserController) Get(c *gin.Context) {
 		c.JSON(http.StatusOK, gin.H{"code": http.StatusBadRequest, "data": nil, "msg": err.Error()})
 		return
 	}
-	user, err := uc.UserService.Get(validator.ID)
+	user, err := uc.UserService.GetUserDetail(validator.ID)
 	if err != nil {
 		c.JSON(http.StatusOK, gin.H{"code": http.StatusBadRequest, "data": nil, "msg": "查無此用戶!"})
 		return

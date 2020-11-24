@@ -17,7 +17,7 @@ func NewUserRepository(conn *sql.DB) UserRepository {
 }
 
 // Add ...
-func (ur *userRepository) InsertUser(user *model.User) (int64, error) {
+func (ur *userRepository) InsertUser(user *model.UserAll) (int64, error) {
 	tx, err := ur.db.Begin()
 	if err != nil {
 		return 0, err
@@ -58,7 +58,7 @@ func (ur *userRepository) GetUserIDByCode(inviteCode string) (int64, error) {
 }
 
 // GetAll Implement UserRepository interface
-func (ur *userRepository) GetAll() ([]*model.User, error) {
+func (ur *userRepository) GetAll() ([]*model.UserAll, error) {
 	query := "SELECT users.id, users.role, users.invite_code, users.invite_user_id, users.`status`, users.create_at, users.update_at,\n" +
 		"user_details.nickname, user_details.avatar, user_details.intro, user_details.sex,\n" +
 		"user_details.birthday, user_details.email, user_details.area, user_details.height,\n" +
@@ -72,7 +72,7 @@ func (ur *userRepository) GetAll() ([]*model.User, error) {
 	if err != nil {
 		return nil, err
 	}
-	users := []*model.User{}
+	users := []*model.UserAll{}
 	for rows.Next() {
 		var uid int64
 		var email string
@@ -87,20 +87,8 @@ func (ur *userRepository) GetAll() ([]*model.User, error) {
 	return users, nil
 }
 
-// GetUser 以 email 與 password 獲取用戶
-func (ur *userRepository) GetUser(email string, password string) (*model.User, error) {
-	query := "SELECT id FROM users WHERE email = ? AND password = ?"
-	row := ur.db.QueryRow(query, email, password)
-	var uid int64
-	if err := row.Scan(&uid); err != nil {
-		return nil, err
-	}
-	return ur.GetByID(uid)
-
-}
-
 // GetById ...
-func (ur *userRepository) GetByID(id int64) (*model.User, error) {
+func (ur *userRepository) GetUserByID(id int64) (*model.UserAll, error) {
 	query := "SELECT users.id, users.role, users.invite_code, users.invite_user_id, users.`status`, users.create_at, users.update_at,\n" +
 		"user_details.nickname, user_details.avatar, user_details.intro, user_details.sex,\n" +
 		"user_details.birthday, user_details.email, user_details.area, user_details.height,\n" +
@@ -112,7 +100,7 @@ func (ur *userRepository) GetByID(id int64) (*model.User, error) {
 		"WHERE users.id = ?;"
 	row := ur.db.QueryRow(query, id)
 
-	var user model.User
+	var user model.UserAll
 	if err := row.Scan(&user.ID, &user.Role, &user.InviteCode, &user.InviteUserID, &user.Status, &user.CreateAt, &user.UpdateAt,
 		&user.Nickname, &user.Avatar, &user.Intro, &user.Sex, &user.Birthday, &user.Email, &user.Area, &user.Height, &user.Weight,
 		&user.Favorite, &user.Smoke, &user.Drink, &user.AuthType, &user.Identifier, &user.Password); err != nil {
@@ -139,7 +127,7 @@ func (ur *userRepository) DeleteByID(id int64) error {
 }
 
 // UpdateUserinfo ...
-func (ur *userRepository) UpdateUserinfo(uid int64, name string, birthday string) (*model.User, error) {
+func (ur *userRepository) UpdateUserinfo(uid int64, name string, birthday string) (*model.UserAll, error) {
 	query := "UPDATE userinfo\n" +
 		"INNER JOIN users ON userinfo.id = users.userinfo_id\n" +
 		"SET userinfo.name = ?,userinfo.birthday = ?\n" +
@@ -148,16 +136,16 @@ func (ur *userRepository) UpdateUserinfo(uid int64, name string, birthday string
 	if err != nil {
 		return nil, err
 	}
-	return ur.GetByID(uid)
+	return ur.GetUserByID(uid)
 }
 
 // UpdateEmail ...
-func (ur *userRepository) UpdateEmail(uid int64, email string) (*model.User, error) {
+func (ur *userRepository) UpdateEmail(uid int64, email string) (*model.UserAll, error) {
 	query := "UPDATE users SET email = ? WHERE id = ?"
 	if _, err := ur.db.Exec(query, email, uid); err != nil {
 		return nil, err
 	}
-	return ur.GetByID(uid)
+	return ur.GetUserByID(uid)
 }
 
 // UpdatePassword ...
@@ -168,7 +156,7 @@ func (ur *userRepository) UpdatePassword(uid int64, password string) error {
 }
 
 // UpdateUserImage ...
-func (ur *userRepository) UpdateUserImage(uid int64, image string) (*model.User, error) {
+func (ur *userRepository) UpdateUserImage(uid int64, image string) (*model.UserAll, error) {
 	query := "UPDATE userinfo\n" +
 		"INNER JOIN users ON userinfo.id = users.userinfo_id\n" +
 		"SET userinfo.image = ?\n" +
@@ -176,5 +164,5 @@ func (ur *userRepository) UpdateUserImage(uid int64, image string) (*model.User,
 	if _, err := ur.db.Exec(query, image, uid); err != nil {
 		return nil, err
 	}
-	return ur.GetByID(uid)
+	return ur.GetUserByID(uid)
 }
