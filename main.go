@@ -65,7 +65,7 @@ func main() {
 	url := ginSwagger.URL("http://localhost:9090/swagger/doc.json") // The url pointing to API definition
 	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler, url))
 	controller.NewUserController(router, userService, jwtTool)
-	controller.NewLoginController(router, loginService, jwtTool)
+	controller.NewLoginController(router, loginService)
 	controller.NewRegisterController(router, registerService)
 
 	router.Run(":9090")
@@ -136,12 +136,12 @@ func setupLoginService() {
 
 func setupRegisterService() {
 	userRepo := repository.NewUserRepository(mysqlDB)
-	otpRepo := repository.NewOTPReopsitory(otpTool)
-	registerService = service.NewRegisterService(userRepo, otpRepo)
+	validateRepo := repository.NewValidateRepository(mysqlDB)
+	registerService = service.NewRegisterService(userRepo, validateRepo, otpTool)
 }
 
 func setupUserService() {
 	userRepo := repository.NewUserRepository(mysqlDB)
 	validateRepo := repository.NewValidateRepository(mysqlDB)
-	loginService = service.NewLoginService(userRepo, validateRepo)
+	loginService = service.NewLoginService(userRepo, validateRepo, jwtTool)
 }

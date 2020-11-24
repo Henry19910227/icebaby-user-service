@@ -9,12 +9,12 @@ import (
 
 // LoginService ...
 type LoginService interface {
-	Login(mobile string, password string) (*model.APILoginRes, error)
+	Login(mobile string, password string) (*model.APILoginRes, string, error)
 }
 
 // RegisterService ...
 type RegisterService interface {
-	Register(user *validator.Register) (int64, error)
+	Register(user *model.APIRegisterReq) (int64, error)
 	SendMobileOTP(mobile string) (string, error)
 	VerifyMobileOTP(code string, mobile string) bool
 }

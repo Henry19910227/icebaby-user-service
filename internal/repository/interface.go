@@ -4,7 +4,8 @@ import "github.com/Henry19910227/icebaby-user-service/internal/model"
 
 // ValidateRepository ...
 type ValidateRepository interface {
-	Validate(Identifier string, password string) (int64, error)
+	ValidateLogin(Identifier string, password string) (int64, error)
+	ValidateInviteCode(code string) (int64, error)
 }
 
 // UserRepository ...

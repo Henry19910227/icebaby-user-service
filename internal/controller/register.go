@@ -3,8 +3,8 @@ package controller
 import (
 	"net/http"
 
+	"github.com/Henry19910227/icebaby-user-service/internal/model"
 	"github.com/Henry19910227/icebaby-user-service/internal/service"
-	"github.com/Henry19910227/icebaby-user-service/internal/validator"
 	"github.com/gin-gonic/gin"
 )
 
@@ -23,7 +23,7 @@ func NewRegisterController(router *gin.Engine, registerService service.RegisterS
 
 // Register ...
 func (rc *ICRegisterController) Register(c *gin.Context) {
-	var input validator.Register
+	var input model.APIRegisterReq
 	if err := c.ShouldBindJSON(&input); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"code": http.StatusBadRequest, "data": nil, "msg": err.Error()})
 		return
@@ -45,7 +45,7 @@ func (rc *ICRegisterController) Register(c *gin.Context) {
 
 // SendMobileOTP 生成 Phone OTP
 func (rc *ICRegisterController) SendMobileOTP(c *gin.Context) {
-	var input validator.MobileOTPRequest
+	var input model.APIMobileOTPReq
 	if err := c.ShouldBindJSON(&input); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"code": http.StatusBadRequest, "data": nil, "msg": err.Error()})
 		return

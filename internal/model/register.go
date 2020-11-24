@@ -1,7 +1,7 @@
-package validator
+package model
 
-// Register 驗證用戶註冊
-type Register struct {
+// APIRegisterReq 驗證用戶註冊
+type APIRegisterReq struct {
 	AythType   int    `json:"auth_type" binding:"required"`
 	Identifier string `json:"identifier" binding:"required"`
 	Password   string `json:"password" binding:"required,min=8,max=16"`
@@ -14,7 +14,7 @@ type Register struct {
 	MobileOTP  string `json:"mobile_otp"`
 }
 
-// MobileOTPRequest 驗證OTP請求
-type MobileOTPRequest struct {
+// APIMobileOTPReq 發送OTP請求
+type APIMobileOTPReq struct {
 	Mobile string `json:"mobile" binding:"required"`
 }
