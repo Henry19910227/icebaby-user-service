@@ -2,7 +2,6 @@ package jwt
 
 import (
 	"errors"
-	"strconv"
 	"time"
 
 	jwt "github.com/dgrijalva/jwt-go"
@@ -21,11 +20,13 @@ func NewJWTTool(setting Setting) *GPJWTTool {
 // GenerateToken ...
 func (t *GPJWTTool) GenerateToken(uid int64) (string, error) {
 
-	claims := &jwt.StandardClaims{
-		Id:        strconv.Itoa(int(uid)),
-		ExpiresAt: time.Now().Add(t.setting.GetExpire()).Unix(),
-		Issuer:    t.setting.GetIssuer(),
-	}
+	// claims := &jwt.StandardClaims{
+	// 	Id:        strconv.Itoa(int(uid)),
+	// 	ExpiresAt: time.Now().Add(t.setting.GetExpire()).Unix(),
+	// 	Issuer:    t.setting.GetIssuer(),
+	// }
+
+	claims := jwt.MapClaims{"sub": uid, "exp": time.Now().Add(t.setting.GetExpire()).Unix()}
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 	tokenString, err := token.SignedString([]byte(t.setting.GetTokenSecret()))
 

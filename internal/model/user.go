@@ -35,21 +35,21 @@ type UserAll struct {
 
 // User 用戶基本資訊
 type User struct {
-	ID       int64
-	Nickname string
-	Avatar   string
-	Intro    string
-	Birthday string
+	ID          int64
+	Nickname    string
+	Role        int
+	Status      int
+	LoginStatus int
 }
 
 // NewUser ...
 func NewUser(userAll *UserAll) *User {
 	return &User{
-		ID:       userAll.ID,
-		Nickname: userAll.Nickname,
-		Avatar:   userAll.Avatar,
-		Intro:    userAll.Intro,
-		Birthday: userAll.Birthday,
+		ID:          userAll.ID,
+		Nickname:    userAll.Nickname,
+		Role:        userAll.Role,
+		Status:      userAll.Status,
+		LoginStatus: userAll.LoginStatus,
 	}
 }
 
