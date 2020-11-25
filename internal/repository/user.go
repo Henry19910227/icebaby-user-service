@@ -23,8 +23,8 @@ func (ur *userRepository) InsertUser(user *model.UserAll) (int64, error) {
 		return 0, err
 	}
 	defer tx.Rollback()
-	query := "INSERT INTO users (role,invite_code,invite_user_id,status) VALUES (?,?,?,?)"
-	userRes, err := tx.Exec(query, user.Role, user.InviteCode, user.InviteUserID, user.Status)
+	query := "INSERT INTO users (role,status) VALUES (?,?)"
+	userRes, err := tx.Exec(query, user.Role, user.Status)
 	if err != nil {
 		return 0, err
 	}
@@ -37,8 +37,8 @@ func (ur *userRepository) InsertUser(user *model.UserAll) (int64, error) {
 	if err != nil {
 		return 0, err
 	}
-	query = "INSERT INTO user_details (user_id,nickname,avatar,intro,sex,birthday,email,area,height,weight,favorite,smoke,drink) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)"
-	_, err = tx.Exec(query, lastUserID, user.Nickname, user.Avatar, user.Intro, user.Sex, user.Birthday, user.Email, user.Area, user.Height, user.Weight, user.Favorite, user.Smoke, user.Drink)
+	query = "INSERT INTO user_details (user_id,nickname,avatar,intro,sex,birthday,email,area,height,weight,favorite,smoke,drink,invite_code,invite_user_id) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)"
+	_, err = tx.Exec(query, lastUserID, user.Nickname, user.Avatar, user.Intro, user.Sex, user.Birthday, user.Email, user.Area, user.Height, user.Weight, user.Favorite, user.Smoke, user.Drink, user.InviteCode, user.InviteUserID)
 	if err != nil {
 		return 0, err
 	}
@@ -89,10 +89,12 @@ func (ur *userRepository) GetAll() ([]*model.UserAll, error) {
 
 // GetById ...
 func (ur *userRepository) GetUserByID(id int64) (*model.UserAll, error) {
-	query := "SELECT users.id, users.role, users.invite_code, users.invite_user_id, users.`status`, users.create_at, users.update_at,\n" +
+	query := "SELECT users.id, users.role, users.`status`, users.create_at, users.update_at,\n" +
+		"users.login_status, users.last_login,\n" +
 		"user_details.nickname, user_details.avatar, user_details.intro, user_details.sex,\n" +
 		"user_details.birthday, user_details.email, user_details.area, user_details.height,\n" +
 		"user_details.weight, user_details.favorite, user_details.smoke, user_details.drink,\n" +
+		"user_details.invite_code, user_details.invite_user_id,\n" +
 		"user_auths.type, user_auths.identifier, user_auths.`password`\n" +
 		"FROM users\n" +
 		"INNER JOIN user_details ON users.id = user_details.user_id\n" +
@@ -101,9 +103,9 @@ func (ur *userRepository) GetUserByID(id int64) (*model.UserAll, error) {
 	row := ur.db.QueryRow(query, id)
 
 	var user model.UserAll
-	if err := row.Scan(&user.ID, &user.Role, &user.InviteCode, &user.InviteUserID, &user.Status, &user.CreateAt, &user.UpdateAt,
+	if err := row.Scan(&user.ID, &user.Role, &user.Status, &user.CreateAt, &user.UpdateAt, &user.LoginStatus, &user.LastLogin,
 		&user.Nickname, &user.Avatar, &user.Intro, &user.Sex, &user.Birthday, &user.Email, &user.Area, &user.Height, &user.Weight,
-		&user.Favorite, &user.Smoke, &user.Drink, &user.AuthType, &user.Identifier, &user.Password); err != nil {
+		&user.Favorite, &user.Smoke, &user.Drink, &user.InviteCode, &user.InviteUserID, &user.AuthType, &user.Identifier, &user.Password); err != nil {
 		return nil, err
 	}
 	return &user, nil

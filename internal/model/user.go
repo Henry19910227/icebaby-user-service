@@ -9,11 +9,11 @@ type APIUserDetailRequest struct {
 type UserAll struct {
 	ID           int64
 	Role         int
-	InviteCode   string
-	InviteUserID int64
 	Status       int
 	CreateAt     string
 	UpdateAt     string
+	LastLogin    string
+	LoginStatus  int
 	Nickname     string
 	Avatar       string
 	Intro        string
@@ -26,6 +26,8 @@ type UserAll struct {
 	Favorite     string
 	Smoke        int
 	Drink        int
+	InviteCode   string
+	InviteUserID int64
 	AuthType     int
 	Identifier   string
 	Password     string

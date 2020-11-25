@@ -34,7 +34,9 @@ func (repo *ICValidateRepository) ValidateLogin(identifier string, password stri
 
 // ValidateInviteCode 以 inviteCode 驗證 user 是否存在
 func (repo *ICValidateRepository) ValidateInviteCode(inviteCode string) (int64, error) {
-	query := "SELECT id FROM users WHERE invite_code = ?"
+	query := "SELECT users.id FROM users\n" +
+		"INNER JOIN user_details ON users.id = user_details.user_id\n" +
+		"WHERE user_details.invite_code = ?;"
 	row := repo.db.QueryRow(query, inviteCode)
 	var uid sql.NullInt64
 	if err := row.Scan(&uid); err != nil {
